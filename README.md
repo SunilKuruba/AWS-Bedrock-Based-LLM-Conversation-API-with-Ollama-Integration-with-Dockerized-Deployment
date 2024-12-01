@@ -80,13 +80,77 @@ cd <project-directory>
 2. Deploy the Scala application jar containing the Akka HTTP server to the EC2 instance.
 
 ---
+### 3. Configure AWS API Gateway
 
-## 3. Configure AWS API Gateway
+Setting up AWS API Gateway involves creating RESTful endpoints, configuring them to invoke AWS Lambda functions, and updating the configuration file with the gateway route. Follow these detailed steps:
 
-1. Set up an AWS API Gateway to expose RESTful endpoints.
-2. Create and configure API route to invoke the AWS Lambda function.
-3. Update the `awsLambdaApiGateway` in config file with gateway route.
+---
 
+### **Step 1: Create a New API Gateway**
+1. **Log in to the AWS Management Console**:
+   - Navigate to the [API Gateway Console](https://console.aws.amazon.com/apigateway/).
+
+2. **Create an API**:
+   - Click on **Create API** and choose **HTTP API** (simpler and modern option) or **REST API** (classic and more feature-rich).
+   - For this setup, select **REST API** and click **Build**.
+
+3. **Configure API Settings**:
+   - Enter a name for your API, such as **ChatbotAPI**.
+   - Choose **Regional** as the endpoint type.
+   - Click **Create API**.
+
+---
+
+### **Step 2: Create and Configure an API Resource and Method**
+1. **Add a Resource**:
+   - In the API dashboard, click **Resources** in the left-hand menu.
+   - Click **Create Resource** and specify a name, e.g., `chatbot`. This will create a `/chatbot` route.
+   - Enable **CORS** if the API will be accessed from a browser.
+
+2. **Add a Method**:
+   - Select the `/chatbot` resource and click **Create Method**.
+   - Choose **POST** (or another HTTP method as needed) and click the checkmark.
+
+3. **Integrate the Lambda Function**:
+   - Under "Integration type," select **Lambda Function**.
+   - Enter the name of the Lambda function you want to invoke (e.g., `ChatbotHandler`).
+   - Click **Save** and confirm when prompted to add the necessary permissions for API Gateway to invoke the Lambda function.
+
+---
+
+### **Step 3: Deploy the API**
+1. **Deploy the API**:
+   - Click on **Actions** in the **Resources** section and select **Deploy API**.
+   - Create a new deployment stage, e.g., `prod`.
+   - Note the **Invoke URL** (e.g., `https://<api-id>.execute-api.<region>.amazonaws.com/prod/chatbot`). This is the endpoint your clients will call.
+
+2. **Test the API**:
+   - Use **Postman** or **cURL** to send a POST request to the deployed endpoint with a sample payload.
+   - Example `curl` command:
+     ```bash
+     curl -X POST -H "Content-Type: application/json" -d '{"message": "Hello"}' https://<api-id>.execute-api.<region>.amazonaws.com/prod/chatbot
+     ```
+
+---
+
+### **Step 4: Update the Configuration File**
+1. **Locate the Configuration File**:
+   - Open the configuration file (e.g., `application.conf` or `config.json`) in your project.
+
+2. **Update the `awsLambdaApiGateway` Setting**:
+   - Add or update the gateway route in the configuration file with the **Invoke URL**:
+     ```json
+     {
+       "awsLambdaApiGateway": "https://<api-id>.execute-api.<region>.amazonaws.com/prod/chatbot"
+     }
+     ```
+
+3. **Save the File**:
+   - Ensure the file is saved and deployed with your application.
+
+---
+
+By following these steps, you will have a fully functional AWS API Gateway exposing RESTful endpoints that invoke your Lambda function. The updated configuration file will point your application to the correct API route.
 ---
 
 ## 4. Set Up AWS Lambda
