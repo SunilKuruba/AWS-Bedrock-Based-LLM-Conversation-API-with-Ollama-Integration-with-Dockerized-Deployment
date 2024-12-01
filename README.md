@@ -2,6 +2,8 @@
 
 This project demonstrates the integration of AWS Bedrock, Ollama, and AWS Lambda to create a conversational API. The system mimics a chatbot conversation where AWS Bedrock generates text, and Ollama responds accordingly, facilitated through AWS Lambda. The project uses Akka HTTP to handle requests and responses, gRPC for service communication, and AWS API Gateway for managing the API.
 
+![img.png](img.png)
+
 ## Architecture Overview
 - **Client Interface**: The interaction begins with Postman or curl, where a client sends a request.
 - **Akka HTTP Server**: An Akka HTTP server listens for incoming requests and routes them to appropriate endpoints.
@@ -12,9 +14,8 @@ This project demonstrates the integration of AWS Bedrock, Ollama, and AWS Lambda
 
 ## Project Structure
 
-
 Project Structure:
-
+```
 ├── src
 │   ├── main
 │   │   ├── scala
@@ -29,7 +30,7 @@ Project Structure:
 ├── .gitignore                                 # Git ignore file
 ├── build.sbt                                  # Build configuration file for SBT
 └── README.md                                  # Project documentation
-
+```
 
 ## Prerequisites
 Ensure the following are installed and configured:
@@ -77,14 +78,14 @@ Ensure that your test environment has the necessary libraries and dependencies i
 Send a POST request to the API endpoint (/chat) with a JSON payload containing the user's message:
 
 Request:
-```json```
+```
 {
 "message": "Hello, how are you?"
 }
-```json```
+```
 Response:
-```json```
+```
 {
 "response": "I'm doing great, thank you for asking! How can I assist you today?"
 }
-```json```
+```
