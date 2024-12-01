@@ -13,6 +13,7 @@ lazy val root = project
       "com.typesafe.akka" %% "akka-actor" % "2.6.20",
       "com.typesafe.akka" %% "akka-stream" % "2.6.20",
       "com.typesafe.akka" %% "akka-http" % "10.2.10",
+      "com.typesafe" % "config" % "1.4.2",
       "com.typesafe.akka" %% "akka-http-spray-json" % "10.2.10", // JSON marshalling/unmarshalling
       "io.github.ollama4j" % "ollama4j" % "1.0.79", // Ollama
       "software.amazon.awssdk" % "lambda" % "2.25.27", // AWS Lambda SDK

@@ -78,7 +78,7 @@ object OllamaAPIClient {
    * @param results       Mutable YAML results object.
    * @return              Optionally, the next request for subsequent iterations.
    */
-  private def processIteration(
+   def processIteration(
                                 iteration: Int,
                                 request: QueryRequest,
                                 llamaAPI: OllamaAPI,
@@ -115,7 +115,7 @@ object OllamaAPIClient {
    *
    * @return Configured OllamaAPI instance.
    */
-  private def initializeLlamaAPI(): OllamaAPI = {
+  def initializeLlamaAPI(): OllamaAPI = {
     val host = ConfigLoader.get("ollama.host")
     val timeout = ConfigLoader.get("ollama.query-timeout").toLong
     val llamaAPI = new OllamaAPI(host)
