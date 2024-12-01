@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package protobuf;
+
+message LlmQueryRequest {
+  string input = 1;
+  int32 maxWords = 2;
+}
+
+message LlmQueryResponse {
+  string input = 1;
+  string output = 2;
+}
