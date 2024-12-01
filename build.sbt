@@ -19,6 +19,7 @@ lazy val root = project
       "software.amazon.awssdk" % "core" % "2.26.25",    // AWS Core SDK
       "com.softwaremill.sttp.client3" %% "core" % "3.9.7",
       "com.thesamet.scalapb" %% "scalapb-json4s" % "0.11.0",
+      "org.yaml" % "snakeyaml" % "1.24",
       "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf",
       "org.scalatest" %% "scalatest" % "3.2.16" % Test,
       "org.slf4j" % "slf4j-simple" % "2.0.13", //  logging
