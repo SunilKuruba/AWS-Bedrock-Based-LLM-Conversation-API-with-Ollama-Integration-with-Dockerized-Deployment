@@ -45,28 +45,95 @@ Ensure the following are installed and configured:
 - **Java Development Kit (JDK) 8 or higher**
 - **Docker** (for containerized services if needed)
 
-## Setting Up AWS Environment
-1. **AWS Lambda**:
-   - Create a Lambda function to interact with AWS Bedrock for text generation.
-   - Ensure the Lambda function has necessary permissions for invoking AWS Bedrock.
+# Steps to Execute the Project
 
-2. **AWS Bedrock**:
-   - Set up AWS Bedrock as the text generation service.
-   - Ensure Bedrock is configured with access permissions.
+## 1. Clone the Repository
 
-3. **API Gateway**:
-   - Configure AWS API Gateway to expose the Lambda function via a RESTful API.
+### Clone the GitHub repository to your local machine:
+```bash
+git clone https://github.com/SunilKuruba/AWS-Bedrock-Based-LLM-Conversation-API-with-Ollama-Integration.git
+```
 
-4. **Ollama Setup**:
-   - Install and configure Ollama for local LLM responses.
-   - Integrate Ollama with the Lambda function to process the responses from AWS Bedrock.
+### Navigate to the project directory:
+```bash
+cd <project-directory>
+```
 
-## Building and Running the Project
-1. Clone the repository:
+---
+
+## 2. Set Up EC2 Instance
+
+1. Launch an AWS EC2 instance with the necessary specifications for running a Scala application.
+2. Install the following on the instance:
+   - Java (JDK 8 or higher)
+   - SBT (Scala Build Tool)
+   - Any required dependencies.
+3. Deploy the Scala application containing the Akka HTTP server to the EC2 instance.
+
+---
+
+## 3. Configure AWS API Gateway
+
+1. Set up an AWS API Gateway to expose RESTful endpoints.
+2. Create and configure API routes to invoke the AWS Lambda function.
+3. Note down the generated API endpoint URLs for later use.
+
+---
+
+## 4. Set Up AWS Lambda
+
+1. Create a Lambda function in AWS and upload the Python code located in:
    ```bash
-   git clone https://github.com/SunilKuruba/AWS-Bedrock-Based-LLM-Conversation-API-with-Ollama-Integration.git
-   cd AWS-Bedrock-Based-LLM-Conversation-API-with-Ollama-Integration
+   src/main/aws/lambda.py
+   ```
+2. Ensure that the Lambda function is correctly configured to communicate with AWS Bedrock and Ollama.
 
+---
+
+## 5. Set Up AWS Bedrock
+
+1. Configure AWS Bedrock with the Meta Llama foundation model for text generation.
+2. Ensure that the IAM policy for the Bedrock instance has the necessary permissions to interact with the Lambda function.
+
+---
+
+## 6. Configure IAM Policies
+
+Set up an IAM role or policy with permissions for:
+- AWS Bedrock access.
+- AWS Lambda execution.
+- AWS API Gateway 
+
+---
+
+## 7. Install Ollama Locally
+
+1. Download and install Ollama on your local machine.
+2. Ensure the Ollama server is configured and running before initiating requests.
+
+---
+
+## 8. Install Postman or Use cURL
+
+- Use **Postman** for a user-friendly interface.
+- Alternatively, use **cURL** for CLI-based interactions to send API requests.
+
+---
+
+## 9. Run the Application
+
+1. Use the generated API Gateway endpoint (noted earlier) to send requests to the Akka HTTP server running on the EC2 instance.
+2. Once a request is processed, the output will be available in the following directory:
+   ```bash
+   src/main/resources
+   ```
+
+---
+
+## 10. Monitor Results
+
+- Monitor the results in the specified directory.
+- Iterate or debug as needed for improvements.
 ## Testing
 To validate the implementation, run the provided test cases locally using SBT:
 ```
