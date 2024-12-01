@@ -3,7 +3,7 @@ import akka.actor.ActorSystem
 import io.github.ollama4j.OllamaAPI
 import io.github.ollama4j.utils.Options
 import org.slf4j.LoggerFactory
-import protobuf.llmQuery.LlmQueryRequest
+import protobuf.data.QueryRequest
 import util.{ConfigLoader, OutputWriter, YAML_Helper}
 
 import scala.collection.mutable.ListBuffer
@@ -26,7 +26,7 @@ object OllamaAPIClient {
    */
   def main(args: Array[String]): Unit = {
     val seedText = args.headOption.getOrElse("What is cloud computing?")
-    val protoRequest = new LlmQueryRequest(seedText, 100)
+    val protoRequest = new QueryRequest(seedText, 100)
     implicit val system: ActorSystem = ActorSystem("ConversationAgent")
 
     try {
@@ -42,7 +42,7 @@ object OllamaAPIClient {
    * @param protoRequest Initial LLM request object.
    * @param system       Implicit ActorSystem for managing API calls.
    */
-  def start(protoRequest: LlmQueryRequest)(implicit system: ActorSystem): Unit = {
+  def start(protoRequest: QueryRequest)(implicit system: ActorSystem): Unit = {
     val llamaAPI = initializeLlamaAPI()
     val llamaModel = ConfigLoader.get("ollama.model")
     val iterations = ConfigLoader.get("ollama.iterations").toInt
@@ -80,11 +80,11 @@ object OllamaAPIClient {
    */
   private def processIteration(
                                 iteration: Int,
-                                request: LlmQueryRequest,
+                                request: QueryRequest,
                                 llamaAPI: OllamaAPI,
                                 llamaModel: String,
                                 results: ListBuffer[OutputWriter]
-                              ): Option[LlmQueryRequest] = {
+                              ): Option[QueryRequest] = {
     logger.info(s"Running iteration $iteration...")
 
     // Get LLM response synchronously
@@ -107,7 +107,7 @@ object OllamaAPIClient {
     YAML_Helper.appendResult(results, input, output)
 
     // Prepare the next request based on the generated response
-    Some(new LlmQueryRequest( llamaResponse, 100))
+    Some(new QueryRequest( llamaResponse, 100))
   }
 
   /**

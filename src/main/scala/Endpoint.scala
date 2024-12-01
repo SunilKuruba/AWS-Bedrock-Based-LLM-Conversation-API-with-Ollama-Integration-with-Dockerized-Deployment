@@ -5,9 +5,9 @@ import akka.http.scaladsl.server.Route
 import util.JsonFormats._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import org.slf4j.LoggerFactory
+import protobuf.data.QueryRequest
 
 import scala.concurrent.{ExecutionContext, Future}
-import protobuf.llmQuery._
 
 import scala.util.{Failure, Success}
 
@@ -39,7 +39,7 @@ object Endpoint {
        */
       path("single-response-query") {
         get {
-          entity(as[LlmQueryRequest]) { request =>
+          entity(as[QueryRequest]) { request =>
             // Use onSuccess to handle the asynchronous API call to GrpcApiInvoker
             onSuccess(LambdaInvoker.get(request)) { response =>
               complete(response) // Respond with the LLM query result
@@ -57,7 +57,7 @@ object Endpoint {
        */
       path("conversation-query") {
         get {
-          entity(as[LlmQueryRequest]) { request =>
+          entity(as[QueryRequest]) { request =>
             // Start the conversational agent in a separate thread using a Future
             Future {
               logger.info("Starting chat...")

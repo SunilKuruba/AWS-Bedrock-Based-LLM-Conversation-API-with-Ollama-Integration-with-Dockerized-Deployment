@@ -4,7 +4,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.stream.ActorMaterializer
 import org.slf4j.LoggerFactory
-import protobuf.llmQuery.{LlmQueryRequest, LlmQueryResponse}
+import protobuf.data.{QueryRequest, QueryResponse}
 import spray.json._
 import util.ConfigLoader
 
@@ -19,7 +19,7 @@ import scala.concurrent.duration._
 object LambdaInvoker {
   private val logger = LoggerFactory.getLogger(getClass)
 
-  def get(protoRequest: LlmQueryRequest)(implicit system: ActorSystem): Future[LlmQueryResponse] = {
+  def get(protoRequest: QueryRequest)(implicit system: ActorSystem): Future[QueryResponse] = {
     implicit val ec = system.dispatcher
     implicit val materializer = ActorMaterializer()
     val url = ConfigLoader.get("awsLambdaApiGateway")
@@ -39,7 +39,7 @@ object LambdaInvoker {
         case statusCode if statusCode >= 200 && statusCode < 300 =>
           response.entity.toStrict(5.seconds).map { entity =>
             val responseBody = entity.getData().utf8String
-            val resp = responseBody.parseJson.convertTo[LlmQueryResponse]
+            val resp = responseBody.parseJson.convertTo[QueryResponse]
             logger.info(resp.toString)
             resp
           }

@@ -1,6 +1,6 @@
 package util
 
-import protobuf.llmQuery.{LlmQueryRequest, LlmQueryResponse}
+import protobuf.data.{QueryRequest, QueryResponse}
 import spray.json.DefaultJsonProtocol._
 import spray.json._
 
@@ -25,16 +25,16 @@ object JsonFormats {
    * JSON format for the `LlmQueryRequest` proto-generated class.
    * Converts between `LlmQueryRequest` and its JSON representation using the intermediate `LlmQueryRequestCase`.
    */
-  implicit val llmQueryRequestFormat: RootJsonFormat[LlmQueryRequest] = new RootJsonFormat[LlmQueryRequest] {
-    override def write(obj: LlmQueryRequest): JsValue = {
+  implicit val llmQueryRequestFormat: RootJsonFormat[QueryRequest] = new RootJsonFormat[QueryRequest] {
+    override def write(obj: QueryRequest): JsValue = {
       // Serialize `LlmQueryRequest` to JSON via `LlmQueryRequestCase`
       LlmQueryRequestCase(obj.input, obj.maxWords).toJson
     }
 
-    override def read(json: JsValue): LlmQueryRequest = {
+    override def read(json: JsValue): QueryRequest = {
       // Deserialize JSON to `LlmQueryRequest` via `LlmQueryRequestCase`
       val caseClass = json.convertTo[LlmQueryRequestCase]
-      LlmQueryRequest(caseClass.input, caseClass.maxWords)
+      QueryRequest(caseClass.input, caseClass.maxWords)
     }
   }
 
@@ -42,16 +42,16 @@ object JsonFormats {
    * JSON format for the `LlmQueryResponse` proto-generated class.
    * Converts between `LlmQueryResponse` and its JSON representation using the intermediate `LlmQueryResponseCase`.
    */
-  implicit val llmQueryResponseFormat: RootJsonFormat[LlmQueryResponse] = new RootJsonFormat[LlmQueryResponse] {
-    override def write(obj: LlmQueryResponse): JsValue = {
+  implicit val llmQueryResponseFormat: RootJsonFormat[QueryResponse] = new RootJsonFormat[QueryResponse] {
+    override def write(obj: QueryResponse): JsValue = {
       // Serialize `LlmQueryResponse` to JSON via `LlmQueryResponseCase`
       LlmQueryResponseCase(obj.input, obj.output).toJson
     }
 
-    override def read(json: JsValue): LlmQueryResponse = {
+    override def read(json: JsValue): QueryResponse = {
       // Deserialize JSON to `LlmQueryResponse` via `LlmQueryResponseCase`
       val caseClass = json.convertTo[LlmQueryResponseCase]
-      LlmQueryResponse(caseClass.input, caseClass.output)
+      QueryResponse(caseClass.input, caseClass.output)
     }
   }
 }

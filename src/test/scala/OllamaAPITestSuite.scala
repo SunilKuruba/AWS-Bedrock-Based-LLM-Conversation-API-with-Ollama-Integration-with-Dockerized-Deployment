@@ -3,12 +3,12 @@ package test
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
 import akka.actor.ActorSystem
-import protobuf.llmQuery.LlmQueryRequest
 import util._
 import akka.http.scaladsl.model.StatusCodes
+import protobuf.data.QueryRequest
+
 import scala.concurrent.Await
 import scala.concurrent.duration._
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class OllamaAPITestSuite extends AnyFunSpec with Matchers {
   implicit val system: ActorSystem = ActorSystem("TestSystem")
@@ -27,7 +27,7 @@ class OllamaAPITestSuite extends AnyFunSpec with Matchers {
 
   describe("JsonFormats") {
     it("should serialize and deserialize LlmQueryRequest") {
-      val originalRequest = new LlmQueryRequest("Test Input", 100)
+      val originalRequest = new QueryRequest("Test Input", 100)
       val jsonValue = JsonFormats.llmQueryRequestFormat.write(originalRequest)
       val reconstructedRequest = JsonFormats.llmQueryRequestFormat.read(jsonValue)
 
@@ -53,7 +53,7 @@ class OllamaAPITestSuite extends AnyFunSpec with Matchers {
 
   describe("LambdaInvoker") {
     it("should successfully invoke LLM API with a valid request") {
-      val protoRequest = new LlmQueryRequest("What is cloud computing?", 100)
+      val protoRequest = new QueryRequest("What is cloud computing?", 100)
 
       val responseFuture = LambdaInvoker.get(protoRequest)
 
@@ -65,7 +65,7 @@ class OllamaAPITestSuite extends AnyFunSpec with Matchers {
     }
 
     it("should fail for an invalid request") {
-      val invalidRequest = new LlmQueryRequest("", 0)
+      val invalidRequest = new QueryRequest("", 0)
 
       val responseFuture = LambdaInvoker.get(invalidRequest)
 
