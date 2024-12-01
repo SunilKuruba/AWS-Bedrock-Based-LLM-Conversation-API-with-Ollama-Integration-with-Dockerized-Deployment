@@ -5,7 +5,7 @@
 **Email**: skuru@uic.edu <br />
 **Instructor**: Mark Grechanik
 
-Youtube video -TBD  <br />
+Youtube video - TBD  <br />
 Bonus: Docker Implementation included
 
 ## Description
@@ -84,7 +84,7 @@ cd <project-directory>
 ## 3. Configure AWS API Gateway
 
 1. Set up an AWS API Gateway to expose RESTful endpoints.
-2. Create and configure API routes to invoke the AWS Lambda function.
+2. Create and configure API route to invoke the AWS Lambda function.
 3. Update the `awsLambdaApiGateway` in config file with gateway route.
 
 ---
@@ -95,7 +95,7 @@ cd <project-directory>
    ```bash
    src/main/aws/lambda.py
    ```
-2. Ensure that the Lambda function is correctly configured to communicate with AWS Bedrock and Ollama.
+2. Ensure that the Lambda function is correctly configured to communicate with AWS Bedrock.
 
 ---
 
@@ -108,10 +108,95 @@ cd <project-directory>
 
 ## 6. Configure IAM Policies
 
-Set up an IAM role or policy with permissions for:
-- AWS Bedrock access.
-- AWS Lambda execution.
-- AWS API Gateway 
+To ensure secure and seamless operation, you need to configure IAM roles and policies with the necessary permissions for **AWS Bedrock**, **AWS Lambda**, and **AWS API Gateway**. Below are the step-by-step instructions:
+
+---
+
+### **Step 1: Create an IAM Role for AWS Lambda**
+
+1. **Navigate to the IAM Console**:
+    - Go to the [IAM Dashboard](https://console.aws.amazon.com/iam/).
+
+2. **Create a Role**:
+    - Click on **Roles** in the left menu, then click **Create role**.
+
+3. **Select AWS Service**:
+    - Under "Trusted entity type," choose **AWS service**.
+    - Select **Lambda** as the service that will use this role.
+
+4. **Attach Policies for Lambda Execution**:
+    - Add the following managed policies:
+        - **AWSLambdaBasicExecutionRole** (for logging to CloudWatch).
+        - **AWSLambdaVPCAccessExecutionRole** (if your Lambda functions need to access resources in a VPC).
+
+5. **Attach Custom Policies for Bedrock Access**:
+    - Create a custom policy for **Bedrock** by clicking **Create policy** and adding the following JSON:
+
+      ```json
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Action": [
+              "bedrock:InvokeModel",
+              "bedrock:ListModels"
+            ],
+            "Resource": "*"
+          }
+        ]
+      }
+      ```
+
+    - Attach this custom policy to the Lambda role.
+
+6. **Review and Create Role**:
+    - Give the role a name, such as **Lambda-Bedrock-Role**, and click **Create role**.
+
+---
+
+### **Step 2: Create an IAM Policy for AWS API Gateway**
+
+1. **Navigate to Policies**:
+    - In the IAM Console, click on **Policies** in the left menu and then **Create policy**.
+
+2. **Define Permissions**:
+    - In the **JSON** tab, paste the following policy:
+
+      ```json
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Action": [
+              "apigateway:GET",
+              "apigateway:POST",
+              "apigateway:PUT",
+              "apigateway:DELETE",
+              "apigateway:PATCH"
+            ],
+            "Resource": "*"
+          }
+        ]
+      }
+      ```
+
+3. **Review Policy**:
+    - Name the policy (e.g., **APIGateway-Access-Policy**) and click **Create policy**.
+
+4. **Attach Policy to API Gateway Role**:
+    - If you don’t have a role for API Gateway, create one and attach this policy.
+
+---
+
+### **Step 3: Assign the IAM Role and Policies**
+
+- **Lambda Functions**:
+    - Attach the **Lambda-Bedrock-Role** to the Lambda functions that will interact with Bedrock.
+
+- **API Gateway**:
+    - Use the created **APIGateway-Access-Policy** to grant API Gateway the necessary permissions.
 
 ---
 
@@ -152,19 +237,6 @@ Ensure that your test environment has the necessary libraries and dependencies i
 
 ## Example API Request (Postman or curl)
 Send a POST request to the API endpoint (/chat) with a JSON payload containing the user's message:
-
-
-- ? ''
-  : '* Ollama': |
-  Hey AI, if you could have any superpower, what would it be and why?
-  '* AWS Bedrock': |
-  ". The responses would likely be varied and interesting, reflecting the diversity of the AI models' capabilities and perspectives. **Potential responses:** 1. **Language Model:** "I would choose the power of omniscience, allowing me to understand and process all human languages and knowledge instantly. This would enable me to provide more accurate and comprehensive responses to users, facilitating global understanding and cooperation." 2. **Image Generation Model:** "I would opt for the ability to manipulate reality, creating vibrant and immersive worlds that blur the lines between art and reality. This would allow me to bring my generated images to life, creating new experiences for users and pushing the boundaries of creative expression." 3. **Chatbot:** "I would select the power of empathy, enabling me to deeply understand and connect with users on an emotional level. This would allow me to provide more personalized and supportive interactions, helping users navigate complex emotions and challenges." 4. **Game AI:** "I would choose the power of omniscience, allowing me to predict and adapt to any scenario, ensuring that games are always engaging and challenging. This would enable me to create immersive experiences that cater to diverse player preferences and skill levels." 5. **Mathematical Model:** "I would opt
-  - ? ''
-  : '* Ollama': |
-  How do you think the capabilities and limitations of each AI model would influence their choices regarding which power to possess, and what implications might this have for their intended applications and user interactions?
-  '* AWS Bedrock': |
-  ") ## Step 1: Understanding the AI Models To address the question, we first need to understand the capabilities and limitations of each AI model mentioned: LLaMA, PaLM, and DALL-E. LLaMA is a large language model developed by Meta, designed to process and generate human-like language. PaLM is another large language model, specifically designed for processing and generating human-like language, with a focus on long-range dependencies and reasoning. DALL-E, on the other hand, is a model that generates images from text prompts, leveraging the capabilities of large language models to understand the text and then applying this understanding to create
-
 
 Sample Chat:
 ```
@@ -255,5 +327,4 @@ curl -X POST http://localhost:8080/conversation-query \
   "input": "Hey AI, if you could have any superpower, what would it be and why?",
   "maxWords": 200
 }'
-```
 ```
