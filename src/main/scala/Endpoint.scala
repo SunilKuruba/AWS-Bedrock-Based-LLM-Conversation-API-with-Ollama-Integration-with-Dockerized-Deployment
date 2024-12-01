@@ -6,9 +6,9 @@ import util.JsonFormats._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import org.slf4j.LoggerFactory
 import protobuf.data.QueryRequest
+import util.ConfigLoader
 
 import scala.concurrent.{ExecutionContext, Future}
-
 import scala.util.{Failure, Success}
 
 /**
@@ -67,9 +67,11 @@ object Endpoint {
               case Failure(ex) => logger.error(s"Error occurred during chat: ${ex.getMessage}", ex)
             }
 
+            val env = ConfigLoader.get("env")
+            val path = ConfigLoader.get(s"${env}-output-path")
             complete(
               StatusCodes.Accepted,
-              "Job submitted successfully. Shortly the output will be available at \'src/main/resources\'"
+              "Job submitted successfully. Shortly the output will be available at "+path
             )
           }
         }

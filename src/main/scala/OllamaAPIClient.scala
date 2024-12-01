@@ -20,23 +20,6 @@ object OllamaAPIClient {
   private val LLAMA_PREFIX = "Give me one follow-up question for "
 
   /**
-   * Main entry point for the AutomatedConversationalAgent.
-   *
-   * @param args Array of arguments where the first argument is the seed text.
-   */
-  def main(args: Array[String]): Unit = {
-    val seedText = args.headOption.getOrElse("What is cloud computing?")
-    val protoRequest = new QueryRequest(seedText, 100)
-    implicit val system: ActorSystem = ActorSystem("ConversationAgent")
-
-    try {
-      start(protoRequest)
-    } finally {
-      system.terminate()
-    }
-  }
-
-  /**
    * Starts the conversational processing loop by invoking APIs in sequence.
    *
    * @param protoRequest Initial LLM request object.
@@ -116,7 +99,8 @@ object OllamaAPIClient {
    * @return Configured OllamaAPI instance.
    */
   def initializeLlamaAPI(): OllamaAPI = {
-    val host = ConfigLoader.get("ollama.host")
+    val env = ConfigLoader.get("env")
+    val host = ConfigLoader.get("ollama."+env+"host")
     val timeout = ConfigLoader.get("ollama.query-timeout").toLong
     val llamaAPI = new OllamaAPI(host)
     llamaAPI.setRequestTimeoutSeconds(timeout)

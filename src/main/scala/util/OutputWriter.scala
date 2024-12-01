@@ -24,7 +24,9 @@ object YAML_Helper {
   }
 
   def save(results: ListBuffer[OutputWriter]): Unit = {
-    val file = new File(s"src/main/resources/output-${Instant.now().toString}.yaml")
+    val env = ConfigLoader.get("env")
+    val path = ConfigLoader.get(s"${env}-output-path")
+    val file = new File(s"${path}output-${Instant.now().toString}.yaml")
     val writer = new BufferedWriter(new FileWriter(file))
 
     try {
