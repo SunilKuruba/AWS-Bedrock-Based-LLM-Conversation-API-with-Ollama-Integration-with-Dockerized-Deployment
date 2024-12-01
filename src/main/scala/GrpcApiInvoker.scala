@@ -2,7 +2,6 @@ import JsonFormats._
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
-import akka.http.scaladsl.model.headers._
 import akka.stream.ActorMaterializer
 import org.slf4j.LoggerFactory
 import protobuf.llmQuery.{LlmQueryRequest, LlmQueryResponse}
@@ -22,7 +21,7 @@ object GrpcApiInvoker {
   def get(protoRequest: LlmQueryRequest)(implicit system: ActorSystem): Future[LlmQueryResponse] = {
     implicit val ec = system.dispatcher
     implicit val materializer = ActorMaterializer()
-    val url = ConfigLoader.getConfig("lambdaApiGateway")
+    val url = ConfigLoader.getConfig("awsLambdaApiGateway")
 
     // Create the HTTP GET request with headers and payload
     val httpRequest = HttpRequest(
@@ -51,7 +50,6 @@ object GrpcApiInvoker {
           Future.failed(new RuntimeException(errorMsg))
       }
     }
-
     responseFuture
   }
 }

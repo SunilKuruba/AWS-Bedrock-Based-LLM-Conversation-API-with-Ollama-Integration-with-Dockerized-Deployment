@@ -60,20 +60,16 @@ object Endpoint {
           entity(as[LlmQueryRequest]) { request =>
             // Start the conversational agent in a separate thread using a Future
             Future {
-              logger.info("Starting Automated Conversational Agent...")
-              AutomatedConversationalAgent.start(request)
-              logger.info("Successfully completed the execution of the agent.")
+              logger.info("Starting chat...")
+              OllamaAPIClient.start(request)
             }.onComplete {
-              case Success(_)  => logger.info("Conversation agent executed successfully.")
-              case Failure(ex) => logger.error(s"Error occurred while executing the agent: ${ex.getMessage}", ex)
+              case Success(_)  => logger.info("Successfully completed the chat")
+              case Failure(ex) => logger.error(s"Error occurred during chat: ${ex.getMessage}", ex)
             }
 
-            // Respond immediately to the client with an HTTP 202 (Accepted)
-            // TODO: fix
             complete(
               StatusCodes.Accepted,
-              "Conversation started. Please check the output file in the location: " +
-                "src/main/resources/agent-resp/convestn-{timestamp}"
+              "Job submitted successfully. Shortly the output will be available at \'src/main/resources\'"
             )
           }
         }

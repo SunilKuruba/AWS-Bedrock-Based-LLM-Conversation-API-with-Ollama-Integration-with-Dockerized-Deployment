@@ -14,18 +14,9 @@ import scala.jdk.CollectionConverters._
  * AutomatedConversationalAgent orchestrates API invocations to process conversational inputs
  * and generate refined responses in multiple iterations.
  */
-object AutomatedConversationalAgent {
+object OllamaAPIClient {
   private val logger = LoggerFactory.getLogger(getClass)
-
-  // Configuration keys for external APIs
-  private val OLLAMA_HOST = "ollama.host"
-  private val OLLAMA_REQUEST_TIMEOUT = "ollama.request-timeout-seconds"
-  private val OLLAMA_MODEL = "ollama.model"
-  private val OLLAMA_QUERIES_RANGE = "ollama.range"
-
-  // Input prefixes for query generation
-  private val LLAMA_PREFIX = "how can you respond to the statement "
-  private val LLAMA_TO_LAMBDA_PREFIX = "Do you have any comments on "
+  private val LLAMA_PREFIX = "Give me one follow-up question for "
 
   /**
    * Main entry point for the AutomatedConversationalAgent.
@@ -52,8 +43,8 @@ object AutomatedConversationalAgent {
    */
   def start(protoRequest: LlmQueryRequest)(implicit system: ActorSystem): Unit = {
     val llamaAPI = initializeLlamaAPI()
-    val llamaModel = ConfigLoader.getConfig(OLLAMA_MODEL)
-    val iterations = ConfigLoader.getConfig(OLLAMA_QUERIES_RANGE).toInt
+    val llamaModel = ConfigLoader.getConfig("ollama.model")
+    val iterations = ConfigLoader.getConfig("ollama.iterations").toInt
 
     val results = YAML_Helper.createMutableResult()
     var currentRequest = protoRequest
@@ -91,20 +82,20 @@ object AutomatedConversationalAgent {
                                 request: LlmQueryRequest,
                                 llamaAPI: OllamaAPI,
                                 llamaModel: String,
-                                results: ListBuffer[IterationResult]
+                                results: ListBuffer[OutputWriter]
                               ): Option[LlmQueryRequest] = {
     logger.info(s"Processing iteration $iteration...")
 
     // Get LLM response synchronously
     val grpcResponse = Await.result(GrpcApiInvoker.get(request), 10.seconds)
-    val input = request.input + " "
+    val input = request.input
     val output = grpcResponse.output
 
     // Generate response using OllamaAPI
     val llamaResponse = llamaAPI
       .generate(
         llamaModel,
-        LLAMA_PREFIX + input + output,
+        LLAMA_PREFIX + output,
         false,
         new Options(Map.empty[String, Object].asJava)
       )
@@ -112,14 +103,10 @@ object AutomatedConversationalAgent {
 
     // Log and store results
     logger.info(s"Generated response: $llamaResponse")
-    YAML_Helper.appendResult(results, iteration, input, output, llamaResponse)
+    YAML_Helper.appendResult(results, input, output)
 
     // Prepare the next request based on the generated response
-    if (llamaResponse.nonEmpty) {
-      Some(new LlmQueryRequest(LLAMA_TO_LAMBDA_PREFIX + llamaResponse, 100))
-    } else {
-      None
-    }
+    Some(new LlmQueryRequest( llamaResponse, 100))
   }
 
   /**
@@ -128,8 +115,8 @@ object AutomatedConversationalAgent {
    * @return Configured OllamaAPI instance.
    */
   private def initializeLlamaAPI(): OllamaAPI = {
-    val host = ConfigLoader.getConfig(OLLAMA_HOST)
-    val timeout = ConfigLoader.getConfig(OLLAMA_REQUEST_TIMEOUT).toLong
+    val host = ConfigLoader.getConfig("ollama.host")
+    val timeout = ConfigLoader.getConfig("ollama.query-timeout").toLong
     val llamaAPI = new OllamaAPI(host)
     llamaAPI.setRequestTimeoutSeconds(timeout)
     logger.info(s"OllamaAPI initialized with host: $host and timeout: $timeout seconds")

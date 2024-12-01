@@ -27,6 +27,6 @@ object AkkaHttpServer extends App {
 
   // Unbind the server and terminate the ActorSystem after the user input
   bindingFuture
-    .flatMap(_.unbind())  // Unbind the server
-    .onComplete(_ => system.terminate())  // Terminate the ActorSystem
+    .flatMap(_.unbind())
+    .onComplete(_ => system.terminate())
 }

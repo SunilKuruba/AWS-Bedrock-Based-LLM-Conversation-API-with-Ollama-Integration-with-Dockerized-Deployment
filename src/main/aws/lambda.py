@@ -15,7 +15,7 @@ def lambda_handler(event, context):
         # Decode input
         input_data = base64.b64decode(event.get('body', "")).decode('utf-8')
         req_body = dict(line.split(":", 1) for line in input_data.strip().split("\n"))
-        user_input = req_body.get('input', 'Hello, world!').strip('"')
+        user_input = req_body.get('input', 'What is cloud computing?').strip('"')
         max_words = int(req_body.get('maxWords', 100))
 
         # Invoke Bedrock model
