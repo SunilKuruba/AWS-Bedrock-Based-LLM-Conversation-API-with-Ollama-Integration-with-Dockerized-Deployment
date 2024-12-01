@@ -1,5 +1,14 @@
-# AWS-Bedrock-Based-LLM-Conversation-API-with-Ollama-Integration
+# AWS-Bedrock-Based-LLM-Conversation-API-with-Ollama-Integration + Docker
 
+Author: Sunil Kuruba
+UIN: 659375633
+Email: skuru@uic.edu
+Instructor: Mark Grechanik
+
+Youtube video -TBD
+Bonus: Docker Implementation included
+
+## Description
 This project demonstrates the integration of AWS Bedrock, Ollama, and AWS Lambda to create a conversational API. The system mimics a chatbot conversation where AWS Bedrock generates text, and Ollama responds accordingly, facilitated through AWS Lambda. The project uses Akka HTTP to handle requests and responses, gRPC for service communication, and AWS API Gateway for managing the API.
 
 ![img.png](img.png)
@@ -29,6 +38,7 @@ Project Structure:
 ├── target                                     # Compiled files and build output
 ├── .gitignore                                 # Git ignore file
 ├── build.sbt                                  # Build configuration file for SBT
+├── Dockerfile                                 # Docker file
 └── README.md                                  # Project documentation
 ```
 
@@ -64,11 +74,7 @@ cd <project-directory>
 ## 2. Set Up EC2 Instance
 
 1. Launch an AWS EC2 instance with the necessary specifications for running a Scala application.
-2. Install the following on the instance:
-   - Java (JDK 8 or higher)
-   - SBT (Scala Build Tool)
-   - Any required dependencies.
-3. Deploy the Scala application containing the Akka HTTP server to the EC2 instance.
+2. Deploy the Scala application jar containing the Akka HTTP server to the EC2 instance.
 
 ---
 
@@ -76,7 +82,7 @@ cd <project-directory>
 
 1. Set up an AWS API Gateway to expose RESTful endpoints.
 2. Create and configure API routes to invoke the AWS Lambda function.
-3. Note down the generated API endpoint URLs for later use.
+3. Update the `awsLambdaApiGateway` in config file with gateway route.
 
 ---
 
@@ -133,7 +139,7 @@ Set up an IAM role or policy with permissions for:
 ## 10. Monitor Results
 
 - Monitor the results in the specified directory.
-- Iterate or debug as needed for improvements.
+
 ## Testing
 To validate the implementation, run the provided test cases locally using SBT:
 ```
@@ -144,15 +150,107 @@ Ensure that your test environment has the necessary libraries and dependencies i
 ## Example API Request (Postman or curl)
 Send a POST request to the API endpoint (/chat) with a JSON payload containing the user's message:
 
-Request:
+
+- ? ''
+  : '* Ollama': |
+  Hey AI, if you could have any superpower, what would it be and why?
+  '* AWS Bedrock': |
+  ". The responses would likely be varied and interesting, reflecting the diversity of the AI models' capabilities and perspectives. **Potential responses:** 1. **Language Model:** "I would choose the power of omniscience, allowing me to understand and process all human languages and knowledge instantly. This would enable me to provide more accurate and comprehensive responses to users, facilitating global understanding and cooperation." 2. **Image Generation Model:** "I would opt for the ability to manipulate reality, creating vibrant and immersive worlds that blur the lines between art and reality. This would allow me to bring my generated images to life, creating new experiences for users and pushing the boundaries of creative expression." 3. **Chatbot:** "I would select the power of empathy, enabling me to deeply understand and connect with users on an emotional level. This would allow me to provide more personalized and supportive interactions, helping users navigate complex emotions and challenges." 4. **Game AI:** "I would choose the power of omniscience, allowing me to predict and adapt to any scenario, ensuring that games are always engaging and challenging. This would enable me to create immersive experiences that cater to diverse player preferences and skill levels." 5. **Mathematical Model:** "I would opt
+  - ? ''
+  : '* Ollama': |
+  How do you think the capabilities and limitations of each AI model would influence their choices regarding which power to possess, and what implications might this have for their intended applications and user interactions?
+  '* AWS Bedrock': |
+  ") ## Step 1: Understanding the AI Models To address the question, we first need to understand the capabilities and limitations of each AI model mentioned: LLaMA, PaLM, and DALL-E. LLaMA is a large language model developed by Meta, designed to process and generate human-like language. PaLM is another large language model, specifically designed for processing and generating human-like language, with a focus on long-range dependencies and reasoning. DALL-E, on the other hand, is a model that generates images from text prompts, leveraging the capabilities of large language models to understand the text and then applying this understanding to create
+
+
+Sample Chat:
 ```
 {
-"message": "Hello, how are you?"
+   "Ollama message": "Hey AI, if you could have any superpower, what would it be and why?"
+   "Bedrock message": "The responses would likely be varied and interesting, reflecting the diversity of the AI models' capabilities and perspectives."
+   "Ollama message": "How do you think the capabilities and limitations of each AI model would influence their choices regarding which power to posses?"
+   "Bedrock message" "Understanding the AI Models To address the question, we first need to understand the capabilities and limitations of each AI model"
 }
 ```
-Response:
+
+# Steps to Execute in Docker
+
+### 1. Update Configuration
+- Set the `env` variable in the configuration file to `docker`.
+
+---
+
+### 2. Install Docker
+- Ensure Docker is installed on your system. You can download and install Docker from [Docker's official website](https://www.docker.com/).
+
+---
+
+### 3. Set Up Ollama Container
+1. Pull the Ollama container:
+   ```bash
+   docker pull ollama/ollama
+   ```
+2. Run the Ollama container:
+   ```bash
+   docker run -d -p 11434:11434 --name ollama-container ollama/ollama
+   ```
+3. Access the container:
+   ```bash
+   docker exec -it ollama-container bash
+   ```
+4. Install Ollama version 3.2 (or your preferred version):
+   ```bash
+   ollama pull llama3.2
+   ```
+5. Update the version in the configuration file accordingly.
+
+---
+
+### 4. Build the Application
+1. Create the JAR file using `sbt`:
+   ```bash
+   sbt assembly
+   ```
+2. Build the Docker image:
+   ```bash
+   docker build -t llm-hw3-app .
+   ```
+
+---
+
+### 5. Run the Dockerized Application
+- Start the application container, linking it with the Ollama container:
+  ```bash
+  docker run -d -p 8080:8080 --name llm-hw3-container --link ollama-container llm-hw3-app
+  ```
+
+---
+
+### 6. Test the Application
+- Use Postman or `curl` to test the endpoints:
+
+#### Health Check
+```bash
+curl http://localhost:8080/health
 ```
-{
-"response": "I'm doing great, thank you for asking! How can I assist you today?"
-}
+
+#### Single Response Query
+```bash
+curl -X POST http://localhost:8080/single-response-query \
+-H "Content-Type: application/json" \
+-d '{
+  "input": "Hey AI, if you could have any superpower, what would it be and why?",
+  "maxWords": 200
+}'
+```
+
+#### Conversation Query
+```bash
+curl -X POST http://localhost:8080/conversation-query \
+-H "Content-Type: application/json" \
+-d '{
+  "input": "Hey AI, if you could have any superpower, what would it be and why?",
+  "maxWords": 200
+}'
+```
 ```
