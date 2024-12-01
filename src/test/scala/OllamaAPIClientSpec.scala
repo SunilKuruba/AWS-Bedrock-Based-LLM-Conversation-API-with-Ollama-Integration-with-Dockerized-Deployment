@@ -10,12 +10,8 @@ import util.JsonFormats._
 import scala.concurrent.ExecutionContext
 
 class OllamaAPIClientSpec extends AnyWordSpec with Matchers with ScalatestRouteTest {
-
-  // Initialize ActorSystem for the test
   override implicit val system: ActorSystem = ActorSystem("TestSystem")
   implicit val ec: ExecutionContext = system.dispatcher
-
-  // Your route definition here
   val route = Endpoint.routes(system)  // assuming the routes are defined in the Endpoint object
 
   "The Ollama API" should {

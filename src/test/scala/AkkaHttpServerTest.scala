@@ -1,5 +1,5 @@
-import akka.http.scaladsl.testkit.{ScalatestRouteTest, RouteTest}
 import akka.http.scaladsl.model._
+import akka.http.scaladsl.testkit.ScalatestRouteTest
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 

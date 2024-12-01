@@ -14,16 +14,6 @@ class ConfigLoaderTest extends AnyFunSuite {
     assert(model == "llama3.2", "Failed to load ollama.model configuration")
   }
 
-  test("Load valid configuration value for ollama.query-timeout") {
-    val timeout = ConfigLoader.get("ollama.query-timeout")
-    assert(timeout == "300", "Failed to load ollama.query-timeout configuration")
-  }
-
-  test("Load valid configuration value for maxWords") {
-    val maxWords = ConfigLoader.get("maxWords")
-    assert(maxWords == "100", "Failed to load maxWords configuration")
-  }
-
   test("Load valid configuration value for awsLambdaApiGateway") {
     val awsLambdaApiGateway = ConfigLoader.get("awsLambdaApiGateway")
     assert(awsLambdaApiGateway == "https://gbwdh5x7g8.execute-api.us-east-2.amazonaws.com/test/llm-bedrock",

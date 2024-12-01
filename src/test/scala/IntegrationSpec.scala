@@ -1,5 +1,3 @@
-package test
-
 import akka.actor.ActorSystem
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
