@@ -1,4 +1,4 @@
-import JsonFormats._
+import util.JsonFormats._
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
@@ -6,6 +6,7 @@ import akka.stream.ActorMaterializer
 import org.slf4j.LoggerFactory
 import protobuf.llmQuery.{LlmQueryRequest, LlmQueryResponse}
 import spray.json._
+import util.ConfigLoader
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -15,13 +16,13 @@ import scala.concurrent.duration._
  * for querying a large language model. It handles API requests, parses the response, and
  * performs logging for debugging and monitoring.
  */
-object GrpcApiInvoker {
+object LambdaInvoker {
   private val logger = LoggerFactory.getLogger(getClass)
 
   def get(protoRequest: LlmQueryRequest)(implicit system: ActorSystem): Future[LlmQueryResponse] = {
     implicit val ec = system.dispatcher
     implicit val materializer = ActorMaterializer()
-    val url = ConfigLoader.getConfig("awsLambdaApiGateway")
+    val url = ConfigLoader.get("awsLambdaApiGateway")
 
     // Create the HTTP GET request with headers and payload
     val httpRequest = HttpRequest(

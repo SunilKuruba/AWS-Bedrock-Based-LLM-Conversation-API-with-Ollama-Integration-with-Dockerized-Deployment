@@ -1,8 +1,10 @@
+package util
+
 import org.yaml.snakeyaml.{DumperOptions, Yaml}
 
-import scala.collection.mutable.ListBuffer
 import java.io.{BufferedWriter, File, FileWriter}
 import java.time.Instant
+import scala.collection.mutable.ListBuffer
 import scala.jdk.CollectionConverters._
 
 case class OutputWriter(question: String, llmResponse: String)
@@ -11,7 +13,6 @@ object YAML_Helper {
   private val options = new DumperOptions()
   options.setPrettyFlow(true)
   options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK)
-
   private val yaml = new Yaml(options)
 
   def createMutableResult(): ListBuffer[OutputWriter] = {
@@ -30,9 +31,9 @@ object YAML_Helper {
       // Convert the entire results list to a list of maps for YAML dumping
       val yamlEntries = results.zipWithIndex.map { case (result, index) =>
         Map(
-          s"Iteration ${index + 1}" -> Map(
-            "* Ollama" -> result.question,
-            "* AWS Bedrock" -> result.llmResponse
+          s"" -> Map(
+            "* Ollama" -> { result.question + "\n"},
+            "* AWS Bedrock" -> { result.llmResponse+ "\n"}
           ).asJava
         ).asJava
       }.asJava

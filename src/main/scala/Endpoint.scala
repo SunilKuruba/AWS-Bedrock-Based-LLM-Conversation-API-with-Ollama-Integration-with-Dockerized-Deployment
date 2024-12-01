@@ -2,7 +2,7 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import JsonFormats._
+import util.JsonFormats._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import org.slf4j.LoggerFactory
 
@@ -41,7 +41,7 @@ object Endpoint {
         get {
           entity(as[LlmQueryRequest]) { request =>
             // Use onSuccess to handle the asynchronous API call to GrpcApiInvoker
-            onSuccess(GrpcApiInvoker.get(request)) { response =>
+            onSuccess(LambdaInvoker.get(request)) { response =>
               complete(response) // Respond with the LLM query result
             }
           }

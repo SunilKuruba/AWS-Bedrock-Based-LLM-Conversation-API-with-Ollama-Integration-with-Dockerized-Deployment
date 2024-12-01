@@ -1,6 +1,8 @@
-import spray.json._
-import DefaultJsonProtocol._
+package util
+
 import protobuf.llmQuery.{LlmQueryRequest, LlmQueryResponse}
+import spray.json.DefaultJsonProtocol._
+import spray.json._
 
 /**
  * Case classes to serve as intermediate representations for proto-generated classes.

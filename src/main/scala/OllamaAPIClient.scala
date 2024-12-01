@@ -4,6 +4,7 @@ import io.github.ollama4j.OllamaAPI
 import io.github.ollama4j.utils.Options
 import org.slf4j.LoggerFactory
 import protobuf.llmQuery.LlmQueryRequest
+import util.{ConfigLoader, OutputWriter, YAML_Helper}
 
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.Await
@@ -43,8 +44,8 @@ object OllamaAPIClient {
    */
   def start(protoRequest: LlmQueryRequest)(implicit system: ActorSystem): Unit = {
     val llamaAPI = initializeLlamaAPI()
-    val llamaModel = ConfigLoader.getConfig("ollama.model")
-    val iterations = ConfigLoader.getConfig("ollama.iterations").toInt
+    val llamaModel = ConfigLoader.get("ollama.model")
+    val iterations = ConfigLoader.get("ollama.iterations").toInt
 
     val results = YAML_Helper.createMutableResult()
     var currentRequest = protoRequest
@@ -84,10 +85,10 @@ object OllamaAPIClient {
                                 llamaModel: String,
                                 results: ListBuffer[OutputWriter]
                               ): Option[LlmQueryRequest] = {
-    logger.info(s"Processing iteration $iteration...")
+    logger.info(s"Running iteration $iteration...")
 
     // Get LLM response synchronously
-    val grpcResponse = Await.result(GrpcApiInvoker.get(request), 10.seconds)
+    val grpcResponse = Await.result(LambdaInvoker.get(request), 10.seconds)
     val input = request.input
     val output = grpcResponse.output
 
@@ -115,8 +116,8 @@ object OllamaAPIClient {
    * @return Configured OllamaAPI instance.
    */
   private def initializeLlamaAPI(): OllamaAPI = {
-    val host = ConfigLoader.getConfig("ollama.host")
-    val timeout = ConfigLoader.getConfig("ollama.query-timeout").toLong
+    val host = ConfigLoader.get("ollama.host")
+    val timeout = ConfigLoader.get("ollama.query-timeout").toLong
     val llamaAPI = new OllamaAPI(host)
     llamaAPI.setRequestTimeoutSeconds(timeout)
     logger.info(s"OllamaAPI initialized with host: $host and timeout: $timeout seconds")
