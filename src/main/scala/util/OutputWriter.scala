@@ -1,5 +1,6 @@
 package util
 
+import org.slf4j.LoggerFactory
 import org.yaml.snakeyaml.{DumperOptions, Yaml}
 
 import java.io.{BufferedWriter, File, FileWriter}
@@ -10,6 +11,7 @@ import scala.jdk.CollectionConverters._
 case class OutputWriter(question: String, llmResponse: String)
 
 object YAML_Helper {
+  private val logger = LoggerFactory.getLogger(getClass)
   private val options = new DumperOptions()
   options.setPrettyFlow(true)
   options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK)
@@ -43,7 +45,7 @@ object YAML_Helper {
       // Dump the entire list of entries at once
       yaml.dump(yamlEntries, writer)
 
-      println(s"YAML file created at: ${file.getAbsolutePath}")
+      logger.info(s"YAML file created at: ${file.getAbsolutePath}")
     } finally {
       writer.close()
     }

@@ -5,7 +5,7 @@
 **Email**: skuru@uic.edu <br />
 **Instructor**: Mark Grechanik
 
-Youtube video - TBD  <br />
+YouTube video - https://youtu.be/IRPrV_GgbEI  <br />
 Bonus: Docker Implementation included
 
 ## Description
