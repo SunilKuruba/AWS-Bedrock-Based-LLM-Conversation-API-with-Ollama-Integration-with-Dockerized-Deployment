@@ -1,12 +1,8 @@
-# AWS-Bedrock-Based-LLM-Conversation-API-with-Ollama-Integration + Docker
+# AWS-Bedrock-Based-LLM-Conversation-API-with-Ollama-Integration with Dockerized Deployment
 
 **Author**: Sunil Kuruba <br />
-**UIN**: 659375633 <br />
-**Email**: skuru@uic.edu <br />
 **Instructor**: Mark Grechanik
-
 YouTube video - https://youtu.be/IRPrV_GgbEI  <br />
-Bonus: Docker Implementation included
 
 ## Description
 This project demonstrates the integration of AWS Bedrock, Ollama, and AWS Lambda to create a conversational API. The system mimics a chatbot conversation where AWS Bedrock generates text, and Ollama responds accordingly, facilitated through AWS Lambda. The project uses Akka HTTP to handle requests and responses, gRPC for service communication, **Docker** for containerizing the Scala program deployed on the EC2 instance, and AWS API Gateway for managing the API.
