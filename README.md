@@ -1,4 +1,4 @@
-# AWS-Bedrock-Based-LLM-Conversation-API-with-Ollama-Integration with Dockerized Deployment
+# AWS Bedrock Based LLM Conversation API with Ollama Integration with Dockerized Deployment
 
 **Author**: Sunil Kuruba <br />
 **Instructor**: Mark Grechanik <br />
